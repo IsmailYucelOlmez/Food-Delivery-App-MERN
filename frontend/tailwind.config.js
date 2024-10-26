@@ -12,6 +12,22 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+		fontFamily: {
+			"poppins":['Poppins', 'sans-serif'],
+		},
+		backgroundImage: {
+			"driverAdvertBg":"url('../../src/assets/DriverAdvert.png')"
+		},
+		width: {
+			'9/10':'90%',
+		},
+		height: {
+			'9/10':'90%',
+			'112':'28rem',
+		},
+		inset: {
+			'1/5':'20%',
+		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -54,8 +70,17 @@ export default {
   				'5': 'hsl(var(--chart-5))'
   			}
   		}
-  	}
+  	},
+	  screens: {
+		'xs': '320px',
+		'sm': '540px', 
+		'md': '720px',
+		'lg': '920px',
+		'xl': '1040px',
+		'2xl':'1460px'
+	  },
   },
+  
   plugins: [require("tailwindcss-animate")],
 }
 
