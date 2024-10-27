@@ -25,8 +25,8 @@ const Header=() => {
             <CircleChevronDown color="white"  className="h-9 w-9 pl-3 xs:hidden lg:flex"/>
         </div>
 
-        {/* bucket dropdown */}
       </div>
+      
       <div className="flex justify-around items-center w-full py-4">
         <Image src={Logo} className={"xs:w-28 lg:w-36"} />
 
@@ -35,9 +35,8 @@ const Header=() => {
         <div className="lg:hidden">
           <Sidebar />
         </div>        
-
-        
       </div>
+
     </header>
   )
 }

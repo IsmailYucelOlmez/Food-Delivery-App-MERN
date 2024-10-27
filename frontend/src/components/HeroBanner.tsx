@@ -33,10 +33,10 @@ const HeroBanner = () => {
         
       </div>
 
-      <div className="bg-[#FC8A06] h-9/10 w-1/2 xs:hidden md:absolute bottom-0 right-0 rounded-tl-full "></div>
+      <div className="bg-[#FC8A06] h-9/10 w-1/2 xs:hidden lg:block absolute bottom-0 right-0 rounded-tl-full "></div>
 
-      <Image src={HeroBanner1} className={"xs:hidden md:absolute right-1/5 bottom-0 h-96 z-10"}/>
-      <Image src={HeroBanner2} className={"xs:hidden md:absolute right-1/5 bottom-0 h-72 z-0"}/>
+      <Image src={HeroBanner1} className={"xs:hidden lg:block absolute right-1/5 bottom-0 h-96 z-10"}/>
+      <Image src={HeroBanner2} className={"xs:hidden lg:block absolute right-1/5 bottom-0 h-72 z-0"}/>
       
       
     </div>
