@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import MainPage from './pages/MainPage'
 import HomePage from './pages/HomePage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
+import UserProfilePage from './pages/UserProfilePage'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path='/' element={<MainPage/>} ></Route>
         <Route path='/home' element={<HomePage/>} ></Route>
         <Route path='/auth-callback' element={<AuthCallbackPage/>} ></Route>
+        <Route path='/user-profile' element={<UserProfilePage/>} ></Route>
         <Route path='*' element={<Navigate to={"/"}/>} ></Route>
       </Routes>
 
