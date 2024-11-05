@@ -6,6 +6,7 @@ import MainPage from './pages/MainPage'
 import HomePage from './pages/HomePage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import UserProfilePage from './pages/UserProfilePage'
+import ProtectedRoute from './auth/ProtectedRoute'
 
 
 function App() {
@@ -19,7 +20,9 @@ function App() {
         <Route path='/' element={<MainPage/>} ></Route>
         <Route path='/home' element={<HomePage/>} ></Route>
         <Route path='/auth-callback' element={<AuthCallbackPage/>} ></Route>
-        <Route path='/user-profile' element={<UserProfilePage/>} ></Route>
+        <Route element={<ProtectedRoute/>}>
+          <Route path='/user-profile' element={ <UserProfilePage/>} ></Route>
+        </Route>
         <Route path='*' element={<Navigate to={"/"}/>} ></Route>
       </Routes>
 

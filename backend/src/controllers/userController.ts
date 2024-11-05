@@ -28,8 +28,9 @@ const createCurrentUser:RequestHandler=async(req,res)=>{
 const updateCurrentUser = async (req: Request, res: Response) => {
     try {
       const { name, addressLine1, country, city } = req.body;
-      const user = await User.findById(req.userId);
-  
+
+      const user = await User.findById( req.userId)
+     
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -41,14 +42,35 @@ const updateCurrentUser = async (req: Request, res: Response) => {
   
       await user.save();
   
-      res.send(user);
+      res.json(user);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Error updating user" });
     }
   };
 
+
+const getCurrentUser=async(req:Request, res:Response)=>{
+
+  try {
+
+    const currentUser=await User.findOne({_id: req.userId})
+
+    if(!currentUser){
+
+      return res.status(404).json({message:"User not found"})
+    }
+
+    res.json(currentUser);
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({message:"Error occured"})
+  }
+} 
+
 export default {
     createCurrentUser,
-    updateCurrentUser
+    updateCurrentUser,
+    getCurrentUser,
 }
