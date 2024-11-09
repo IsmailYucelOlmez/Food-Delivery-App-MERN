@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import UserProfilePage from './pages/UserProfilePage'
 import ProtectedRoute from './auth/ProtectedRoute'
+import RestaurantInfoPage from './pages/RestaurantInfoPage'
 
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
         <Route path='/auth-callback' element={<AuthCallbackPage/>} ></Route>
         <Route element={<ProtectedRoute/>}>
           <Route path='/user-profile' element={ <UserProfilePage/>} ></Route>
+        </Route>
+        <Route element={<ProtectedRoute/>}>
+          <Route path='/restaurant-info' element={ <RestaurantInfoPage/>} ></Route>
         </Route>
         <Route path='*' element={<Navigate to={"/"}/>} ></Route>
       </Routes>
