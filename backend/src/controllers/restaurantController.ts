@@ -34,6 +34,15 @@ const getRestaurant=async(req:Request, res:Response)=>{
 
     try {
         
+        const restaurant = Restaurant.findOne({user:req.userId})
+
+        if(!restaurant){
+
+            res.status(404).json({message:"Restaurant not Found"})
+        }
+
+        res.json(restaurant)
+
     } catch (error) {
         console.log(error);
         res.status(500).json({message:"Error Occured"})

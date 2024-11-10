@@ -3,11 +3,20 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
     
-  const {isAuthenticated}=useAuth0();
+  const {isAuthenticated, isLoading}=useAuth0();
+
+  if(isLoading){
+    return <span>Loading...</span>
+    
+  }
 
   //Outlet returns component's all children (Outlet's children must be Route component)
+  if(isAuthenticated){
+    return <Outlet/>
+  }
+  
   //replace doesn't create a new entry and change current entry
-  return isAuthenticated ? ( <Outlet/> ) : ( <Navigate to={"/"} replace />)
+  return <Navigate to={"/"} replace />
 
 }
 
