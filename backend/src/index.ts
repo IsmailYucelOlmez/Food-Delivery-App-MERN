@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import userRoute from './routes/userRoute'
 import restaurantRoute from "./routes/restaurantRoute";
 import { v2 as cloudinary } from "cloudinary";
+import searchRestaurantRoute from './routes/searchRestaurantRoute'
 
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>{
@@ -24,6 +25,7 @@ app.use(cors())
 
 app.use("/api/my/user",userRoute)
 app.use("/api/my/restaurant", restaurantRoute);
+app.use("/api/restaurant", searchRestaurantRoute)
 
 app.listen(7000,()=>{
     console.log("server started")

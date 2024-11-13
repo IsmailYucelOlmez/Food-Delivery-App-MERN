@@ -3,6 +3,7 @@ import Logo from '../assets/LOGO 1.png'
 import Navbar from './Navbar'
 import { CircleChevronDown, MapPin, ShoppingBasket } from "lucide-react"
 import Sidebar from "./Sidebar"
+import { Link } from "react-router-dom"
 
 
 const Header=() => {
@@ -28,7 +29,9 @@ const Header=() => {
       </div>
       
       <div className="flex justify-around items-center w-full py-4">
+        <Link to={"/"}>
         <Image src={Logo} className={"xs:w-28 lg:w-36"} />
+        </Link>
 
         <Navbar/>
 
