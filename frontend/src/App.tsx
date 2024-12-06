@@ -3,11 +3,11 @@ import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import MainPage from './pages/MainPage'
-import HomePage from './pages/HomePage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
 import UserProfilePage from './pages/UserProfilePage'
 import ProtectedRoute from './auth/ProtectedRoute'
 import RestaurantInfoPage from './pages/RestaurantInfoPage'
+import SearchPage from './pages/SearchPage'
 
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
       
       <Routes>
         <Route path='/' element={<MainPage/>} ></Route>
-        <Route path='/home' element={<HomePage/>} ></Route>
+        <Route path='/search/:city' element={<SearchPage/>} ></Route>
         <Route path='/auth-callback' element={<AuthCallbackPage/>} ></Route>
         <Route element={<ProtectedRoute/>}>
           <Route path='/user-profile' element={ <UserProfilePage/>} ></Route>

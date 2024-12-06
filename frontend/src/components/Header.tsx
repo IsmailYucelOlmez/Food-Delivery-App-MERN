@@ -1,7 +1,7 @@
 import Image from "./Image"
 import Logo from '../assets/LOGO 1.png'
 import Navbar from './Navbar'
-import { CircleChevronDown, MapPin, ShoppingBasket } from "lucide-react"
+import { CircleChevronDown, ShoppingBasket } from "lucide-react"
 import Sidebar from "./Sidebar"
 import { Link } from "react-router-dom"
 
@@ -11,12 +11,8 @@ const Header=() => {
     <header className="flex flex-col w-full ">
       <div className="flex justify-around items-center bg-[#FAFAFA] border border-b-slate-400 h-12 ">
         
-        <div className="flex items-center gap-3 ">
-          <div className="flex items-center justify-center gap-1">
-            <MapPin className="xs:w-5 md:w-6 xs:h-5 md:h-6"  color="black"/>
-            <p className="xs:text-xs md:text-sm text-[#03081F]">Merkez/Elazığ</p>
-          </div>   
-          <button className="underline text-[#FC8A06] text-xs">Change Location</button>
+        <div>
+          <Link to={"/"}><button className="underline text-[#FC8A06] text-xs">Change Location</button></Link>
         </div>
         
         <div className="flex items-center bg-[#028643] text-white px-2 rounded-md divide-x text-sm ">

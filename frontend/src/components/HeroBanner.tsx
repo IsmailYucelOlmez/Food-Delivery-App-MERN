@@ -1,19 +1,20 @@
-import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import HeroBanner1 from '../assets/Hero_Banner_01.png'
 import HeroBanner2 from '../assets/Hero_Banner_02.png'
 import Image from './Image'
+import SearchBar, { SearchForm } from "./SearchBar";
 
 
 const HeroBanner = () => {
+   
+    const navigate=useNavigate();   
 
-    const [location,setLocation]=useState("");
-    const navigate=useNavigate();
-
-    const navigatePage=()=>{
-
-        if(location) navigate("/home")
+    const handleSearchSubmit=( searchFormValues: SearchForm)=>{
+      console.log(searchFormValues)
+      navigate({pathname:`/search/${searchFormValues.searchQuery}`})
+      
     }
+    
 
   return (
     <div className="border border-slate-400 w-full mx-auto relative rounded-md flex justify-between px-8 items-center bg-[#FBFBFB] xs:h-64 md:h-96 lg:h-112">
@@ -25,10 +26,7 @@ const HeroBanner = () => {
 
         <div className="flex flex-col gap-2 ">
             <p className="xs:text-xs md:text-sm ">Choose Location</p>
-            <div className="flex gap-2 items-center">
-                <input type="text" value={location} onChange={(e)=>setLocation(e.target.value)} className="px-2 py-1 border border-black rounded-lg outline-none xs:text-sm md:text-base" placeholder="location" />
-                <button onClick={()=>navigatePage()} className="px-2 py-1 rounded-lg text-white bg-[#FC8A06] xs:text-sm md:text-base">Search</button>
-            </div>
+            <SearchBar placeHolder="Search a City" onSubmit={handleSearchSubmit}/>
         </div>
         
       </div>
