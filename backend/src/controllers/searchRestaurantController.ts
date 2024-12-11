@@ -58,6 +58,17 @@ const searchRestaurant=async(req:Request,res:Response)=>{
 const getRestaurantById=async(req:Request,res:Response)=>{
 
     try {
+
+        const restaurantId=req.params.restauantId
+
+        const response=await Restaurant.findById(restaurantId)
+
+        if(!response){
+            
+            res.status(404).json({message:"Restaurant not found"})
+        }
+
+        res.json(response)
         
     } catch (error) {
         console.log(error);

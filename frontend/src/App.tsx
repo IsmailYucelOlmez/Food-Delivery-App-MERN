@@ -8,6 +8,7 @@ import UserProfilePage from './pages/UserProfilePage'
 import ProtectedRoute from './auth/ProtectedRoute'
 import RestaurantInfoPage from './pages/RestaurantInfoPage'
 import SearchPage from './pages/SearchPage'
+import RestaurantDetailsPage from './pages/RestaurantDetailsPage'
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route element={<ProtectedRoute/>}>
           <Route path='/restaurant-info' element={ <RestaurantInfoPage/>} ></Route>
         </Route>
+        <Route path='/details/:restaurantId' element={<RestaurantDetailsPage/>} ></Route>
         <Route path='*' element={<Navigate to={"/"}/>} ></Route>
       </Routes>
 
