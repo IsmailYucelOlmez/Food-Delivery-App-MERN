@@ -6,7 +6,12 @@ import userRoute from './routes/userRoute'
 import restaurantRoute from "./routes/restaurantRoute";
 import { v2 as cloudinary } from "cloudinary";
 import searchRestaurantRoute from './routes/searchRestaurantRoute'
+import orderRoute from './routes/orderRoute'
 
+//get container form restaurant search page
+//resturant banner navigate to restaurant update form
+//driver module
+//
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>{
     console.log("connected")
@@ -26,6 +31,7 @@ app.use(cors())
 app.use("/api/my/user",userRoute)
 app.use("/api/my/restaurant", restaurantRoute);
 app.use("/api/restaurant", searchRestaurantRoute)
+app.use("/api/order", orderRoute)
 
 app.listen(7000,()=>{
     console.log("server started")

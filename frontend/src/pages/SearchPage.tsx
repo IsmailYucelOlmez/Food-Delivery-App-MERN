@@ -58,9 +58,9 @@ const SearchPage = () => {
           <SortOptionDropdown sortOption={searchState.sortOption} onChange={(value) => setSortOption(value)} />
         </div>
 
-        {results.data.map((restaurant) => (
+        {results.data.map((restaurant,i) => (
 
-          <SearchResultCard restaurant={restaurant} />
+          <SearchResultCard key={i} restaurant={restaurant} />
         ))}
 
         <PaginationSelector page={results.pagination.page} pages={results.pagination.pages} onPageChange={setPage} />
