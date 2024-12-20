@@ -1,7 +1,11 @@
 import Image from "../Image"
 import RestaurantAdvertBg from '../../assets/RestaurantAdvert.png'
+import { useNavigate } from "react-router-dom"
 
 const RestaurantAdvert = () => {
+
+  const navigate=useNavigate();
+
   return (
     <div className="w-full relative rounded-lg">
       <Image src={RestaurantAdvertBg} className="w-full"/>
@@ -19,7 +23,7 @@ const RestaurantAdvert = () => {
             <h5 className="text-[#fff] xs:text-lg md:text-3xl font-semibold">Partner with us</h5>
         </div>
         
-        <button className="bg-[#FC8A06] text-white xs:px-2 md:px-3 xs:py-1 md:py-2 rounded-full xs:text-xs md:text-sm lg:text-base">Get Started</button>
+        <button onClick={()=>navigate("/restaurant-info")} className="bg-[#FC8A06] text-white xs:px-2 md:px-3 xs:py-1 md:py-2 rounded-full xs:text-xs md:text-sm lg:text-base">Get Started</button>
       </div>
       
     </div>

@@ -42,7 +42,7 @@ const SearchPage = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
+    <div className="lg:w-9/10 mx-auto grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
 
       <div id="cuisines-list">
 

@@ -8,10 +8,6 @@ import { v2 as cloudinary } from "cloudinary";
 import searchRestaurantRoute from './routes/searchRestaurantRoute'
 import orderRoute from './routes/orderRoute'
 
-//get container form restaurant search page
-//resturant banner navigate to restaurant update form
-//driver module
-//
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>{
     console.log("connected")
@@ -25,8 +21,12 @@ cloudinary.config({
 
 const app=express();
 
-app.use(express.json())
 app.use(cors())
+
+app.use("/api/order/checkout/webhook", express.raw({ type: "*/*" }));
+
+app.use(express.json())
+
 
 app.use("/api/my/user",userRoute)
 app.use("/api/my/restaurant", restaurantRoute);

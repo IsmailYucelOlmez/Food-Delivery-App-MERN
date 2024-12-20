@@ -5,7 +5,7 @@ import Order from "../models/order";
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
-const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
+//const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
   try {
@@ -40,10 +40,14 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
 
   try {
     const sig = req.headers["stripe-signature"];
+    if(sig == null) { throw new Error('No stripe signature found!');  }
+    const payload=(req as any).rawBody || req.body;
+    const stripeSecret="whsec_d7a790d2b5eb2c22b0d3185a83283f72d1feee5426a8f91dbdd97e7d12435e5a"
+
     event = STRIPE.webhooks.constructEvent(
-      req.body,
+      payload,
       sig as string,
-      STRIPE_ENDPOINT_SECRET
+      stripeSecret
     );
   } catch (error: any) {
     console.log(error);

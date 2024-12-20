@@ -109,7 +109,7 @@ const RestaurantDetailsPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="lg:w-9/10 mx-auto flex flex-col gap-10">
       <AspectRatio ratio={16 / 5}>
         <img
           src={restaurant.imageUrl}
