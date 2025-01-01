@@ -7,6 +7,7 @@ import restaurantRoute from "./routes/restaurantRoute";
 import { v2 as cloudinary } from "cloudinary";
 import searchRestaurantRoute from './routes/searchRestaurantRoute'
 import orderRoute from './routes/orderRoute'
+import driverRoute from "./routes/driverRoute";
 
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>{
@@ -32,6 +33,7 @@ app.use("/api/my/user",userRoute)
 app.use("/api/my/restaurant", restaurantRoute);
 app.use("/api/restaurant", searchRestaurantRoute)
 app.use("/api/order", orderRoute)
+app.use("/api/driver", driverRoute)
 
 app.listen(7000,()=>{
     console.log("server started")

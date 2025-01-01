@@ -100,4 +100,65 @@ export const useCreateMyRestaurant = () => {
 
   export const useGetRestaurantOrders=()=>{
     
+    const { getAccessTokenSilently } = useAuth0();
+
+    const getMyRestaurantOrdersRequest = async (): Promise<Order[]> => {
+      const accessToken = await getAccessTokenSilently();
+
+      const response = await fetch(`${API_BASE_URL}/api/my/restaurant/order`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get orders");
+      }
+      return response.json();
+    };
+
+    const { data: orders, isLoading } = useQuery( "fetchMyRestaurantOrders", getMyRestaurantOrdersRequest );
+
+    return { orders, isLoading };
+  }
+
+  type UpdateOrderStatusRequest = {
+    orderId: string;
+    status: string;
+  };
+
+  export const useUpdateMyRestaurantOrder = () => {
+    const { getAccessTokenSilently } = useAuth0();
+  
+    const updateRestaurantOrderRequest = async ( { orderId, status }: UpdateOrderStatusRequest ) => {
+      const accessToken = await getAccessTokenSilently();
+  
+      const response = await fetch(`${API_BASE_URL}/api/my/restaurant/order/${orderId}/status`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status:status }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update order status");
+      }
+  
+      return response.json();
+    };
+  
+    const { mutate: updateRestaurantStatus, isLoading, error, isSuccess } = useMutation(updateRestaurantOrderRequest);
+  
+    if (isSuccess) {
+      toast.success("Order status updated");
+    }
+  
+    if (error) {
+      toast.error("Unable to update order status");
+    }
+  
+    return { updateRestaurantStatus, isLoading };
   }
