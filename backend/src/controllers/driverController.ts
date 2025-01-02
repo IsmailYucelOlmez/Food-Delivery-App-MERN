@@ -2,30 +2,46 @@ import Driver from "../models/driver";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 
+const createRegexArray = (input: string): RegExp[] => {
+    return input.split(",").map((item) => new RegExp(item.trim(), "i"));
+};
+
 export const getDrivers = async (req: Request, res: Response) => {
     try {
         
         const location = (req.query.location as string) || "";
         const licence_type = (req.query.licence_type as string) || "";
         const experience_years = (req.query.experience_years as string) || "";
-        const have_vehicle_type = (req.query.have_vehicle_type as string) || "";
-        const selectedCuisines = (req.query.selectedCuisines as string) || "";      
+        const have_vehicle_type = (req.query.have_vehicle_type as string) || "";      
         const page = parseInt(req.query.page as string) || 1;
 
         let query: any = {};
 
-        if (selectedCuisines) {
-            const cuisinesArray = selectedCuisines.split(",").map((cuisine) => new RegExp(cuisine, "i"));
-
-            query["cuisines"] = { $all: cuisinesArray };
+        if (licence_type) {
+            
+            query["licence_type"] = { $all: createRegexArray(licence_type) };
         }      
+
+        if (have_vehicle_type) {
+            
+            query["have_vehicle_type"] = { $all: createRegexArray(have_vehicle_type) };
+        }   
+
+        if (experience_years) {
+            
+            query["experience_years"] = parseInt(experience_years);
+        }   
+
+        if (location) {
+                   
+            query["location"] = { $all: createRegexArray(location) };
+        }
 
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
 
-        const sortOption = "lastUpdated";
-        const drivers = await Driver.find(query).sort({ [sortOption]: 1 }).skip(skip).limit(pageSize).lean();
-
+        const drivers = await Driver.find(query).skip(skip).limit(pageSize).lean();
+        // lean() function return the documents from queries with the lean option enabled are plain JavaScript objects, not Mongoose Documents.
 
         const total = await Driver.countDocuments(query);
 
@@ -42,6 +58,25 @@ export const getDrivers = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error Occured" });
+    }
+}
+
+export const getDriverById=async(req:Request, res:Response)=>{
+
+    try{     
+        const driver = await Driver.findOne({user:req.userId})
+
+        if(!driver){
+
+            return res.status(404).json({message:"User not found"})
+        }
+
+        res.json(driver);
+
+    }catch(error){
+
+        console.log(error);
+        res.status(500).json({message:"Error Occured"})
     }
 }
 

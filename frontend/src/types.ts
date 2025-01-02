@@ -9,6 +9,18 @@ export type User={
     country:string,
 }
 
+export type Driver={
+
+  _id: string,
+  user: string,  
+  location: string,
+  license_type: string[],
+  experience_years: number, 
+  languages: string[],
+  have_vehicle_type: string[], 
+  additional_info: string,
+}
+
 export type MenuItem = {
     _id: string;
     name: string;
@@ -59,6 +71,15 @@ export type Order = {
 
 export type RestaurantSearchResponse = {
   data: Restaurant[];
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+  };
+};
+
+export type DriverSearchResponse = {
+  data: Driver[];
   pagination: {
     total: number;
     page: number;

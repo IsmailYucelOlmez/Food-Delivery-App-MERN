@@ -23,10 +23,8 @@ export const useGetRestaurantById=(id?:string)=>{
 }
 
 
-export const useSearchRestaurants = (
-    searchState: SearchState,
-    city?: string
-  ) => {
+export const useSearchRestaurants = ( searchState: SearchState, city?: string ) => {
+  
     const createSearchRequest = async (): Promise<RestaurantSearchResponse> => {
       const params = new URLSearchParams();
       params.set("searchQuery", searchState.searchQuery);

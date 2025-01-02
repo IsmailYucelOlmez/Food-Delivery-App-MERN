@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 const formSchema = z.object({
   searchQuery: z.string({
-    required_error: "Restaurant name is required",
+    required_error: "Name is required",
   }),
 });
 
