@@ -39,7 +39,7 @@ const getRestaurantOrders=async(req:Request, res:Response)=>{
         
         if(!restaurant){
 
-            res.status(404).json({message:"Restaurant not Found"})
+            return res.status(404).json({message:"Restaurant not Found"})
         }
 
         const orders= await Order.find({restaurant:restaurant?._id}).populate("restaurant").populate("user")
@@ -90,7 +90,7 @@ const getRestaurant=async(req:Request, res:Response)=>{
         
         if(!restaurant){
 
-            res.status(404).json({message:"Restaurant not Found"})
+            return res.status(404).json({message:"Restaurant not Found"})
         }
 
         res.json(restaurant)

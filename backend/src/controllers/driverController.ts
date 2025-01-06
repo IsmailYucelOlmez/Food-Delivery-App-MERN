@@ -115,7 +115,7 @@ export const updateDriver=async(req:Request,res:Response)=>{
         }
 
         driver.location=req.body.location;
-        driver.license_type=req.body.license_type;
+        driver.licence_type=req.body.licence_type;
         driver.experience_years=req.body.experience_years;
         driver.languages=req.body.languages;
         driver.have_vehicle_type=req.body.have_vehicle_type;

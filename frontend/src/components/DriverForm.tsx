@@ -4,118 +4,88 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "./ui/separator";
 import { Button } from "@/components/ui/button";
-import { Restaurant } from "@/types";
+import { Driver } from "@/types";
 import { useEffect } from "react";
+import DriverDetailsSection from "./driverform/DriverDetailsSection";
+import LicenceSection from "./driverform/LicenceTypeSection";
+import LanguageSection from "./driverform/LanguageSection";
+import VehicleSection from "./driverform/VehicleSection";
 
 
 const formSchema = z
   .object({
-    restaurantName: z.string({
-      required_error: "restuarant name is required",
+    location: z.string({
+      required_error: "location is required",
     }),
-    city: z.string({
-      required_error: "city is required",
-    }),
-    country: z.string({
-      required_error: "country is required",
-    }),
-    deliveryPrice: z.coerce.number({
-      required_error: "delivery price is required",
+    experience_years: z.coerce.number({
+      required_error: "experience year is required",
       invalid_type_error: "must be a valid number",
     }),
-    estimatedDeliveryTime: z.coerce.number({
-      required_error: "estimated delivery time is required",
-      invalid_type_error: "must be a valid number",
-    }),
-    cuisines: z.array(z.string()).nonempty({
+    licence_type: z.array(z.string()).nonempty({
       message: "please select at least one item",
     }),
-    menuItems: z.array(
-      z.object({
-        name: z.string().min(1, "name is required"),
-        price: z.coerce.number().min(1, "price is required"),
-      })
-    ),
-    imageUrl: z.string().optional(),
-    imageFile: z.instanceof(File, { message: "image is required" }).optional(),
+    have_vehicle_types: z.array(z.string()).nonempty({
+      message: "please select at least one item",
+    }),
+    languages: z.array(z.string()).nonempty({
+      message: "please select at least one item",
+    }),
+    additional_info: z.string({
+      required_error: "additional info is required",
+    }),
   })
-  .refine((data) => data.imageUrl || data.imageFile, {
-    message: "Either image URL or image File must be provided",
-    path: ["imageFile"],
-  });
 
-type RestaurantFormData = z.infer<typeof formSchema>;
+type DriverFormData = z.infer<typeof formSchema>;
 
 type Props = {
-  restaurant?: Restaurant;
-  onSave: (restaurantFormData: FormData) => void;
+  driver?: Driver;
+  onSave: (driverFormData: FormData) => void;
   isLoading: boolean;
 };
 
 
-const DriverForm = ({onSave, isLoading, restaurant}:Props) => {
+const DriverForm = ({onSave, isLoading, driver}:Props) => {
 
-    const form = useForm<RestaurantFormData>({
+    const form = useForm<DriverFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          cuisines: [],
-          menuItems: [{ name: "", price: 0 }],
+          licence_type: [],
+          have_vehicle_types:[],
+          languages:[],
         },
       });
 
+
       useEffect(() => {
-        if (!restaurant) {
+        if (!driver) {
           return;
         }
     
-        
-        const deliveryPriceFormatted = parseInt(
-          (restaurant.deliveryPrice / 100).toFixed(2)
-        );
-    
-        const menuItemsFormatted = restaurant.menuItems.map((item) => ({
-          ...item,
-          price: parseInt((item.price / 100).toFixed(2)),
-        }));
-    
-        const updatedRestaurant = {
-          ...restaurant,
-          deliveryPrice: deliveryPriceFormatted,
-          menuItems: menuItemsFormatted,
-        };
-    
-        form.reset(updatedRestaurant);
-      }, [form, restaurant]);  
+      }, [form, driver]);  
 
-    const onSubmit = (formDataJson: RestaurantFormData) => {
+    const onSubmit = (formDataJson: DriverFormData) => {
         const formData = new FormData();
     
-        formData.append("restaurantName", formDataJson.restaurantName);
-        formData.append("city", formDataJson.city);
-        formData.append("country", formDataJson.country);
+        formData.append("location", formDataJson.location);
+        formData.append("additionalInfo", formDataJson.additional_info);
     
         formData.append(
-          "deliveryPrice",
-          (formDataJson.deliveryPrice * 100).toString()
+          "experienceYears",
+          (formDataJson.experience_years).toString()
         );
-        formData.append(
-          "estimatedDeliveryTime",
-          formDataJson.estimatedDeliveryTime.toString()
-        );
-        formDataJson.cuisines.forEach((cuisine, index) => {
-          formData.append(`cuisines[${index}]`, cuisine);
+        
+        formDataJson.licence_type.forEach((licence, index) => {
+          formData.append(`licences[${index}]`, licence);
         });
-        formDataJson.menuItems.forEach((menuItem, index) => {
-          formData.append(`menuItems[${index}][name]`, menuItem.name);
-          formData.append(
-            `menuItems[${index}][price]`,
-            (menuItem.price * 100).toString()
-          );
+
+        formDataJson.have_vehicle_types.forEach((vehicle, index) => {
+          formData.append(`vehicles[${index}]`, vehicle);
         });
-    
-        if (formDataJson.imageFile) {
-          formData.append(`imageFile`, formDataJson.imageFile);
-        }
+
+        formDataJson.languages.forEach((language, index) => {
+          formData.append(`languages[${index}]`, language);
+        });
+        
     
         onSave(formData);
     };  
@@ -124,13 +94,13 @@ const DriverForm = ({onSave, isLoading, restaurant}:Props) => {
     <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-gray-50 p-10 rounded-lg xs:w-full lg:w-3/4 mx-auto">
 
-          {/* <DetailsSection/>
+          <DriverDetailsSection/>
           <Separator/>
-          <CuisinesSection/>
+          <LicenceSection/>
           <Separator/>
-          <MenuSection/>
+          <LanguageSection/>
           <Separator/>
-          <ImageSection/> */}
+          <VehicleSection/> 
           
           <Button disabled={isLoading} type="submit" className="bg-orange-500">
             {isLoading ? 'Loading':"Submit"}

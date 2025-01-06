@@ -2,8 +2,8 @@ import { useSearchDrivers } from "@/api/DriverApi";
 import LicenceFilter from "../components/driversearchpage/LicenceFilter";
 import PaginationSelector from "../components/searchpage/PaginationSelector";
 import SearchBar, { SearchForm } from "../components/SearchBar";
-import SearchResultCard from "../components/searchpage/SearchResultCard";
 import { useState } from "react";
+import DriverResultCard from "@/components/driversearchpage/DriverResultCard";
 
 
 export type DriverSearchState = {
@@ -49,7 +49,7 @@ const DriverSearchPage = () => {
 
         {results.data.map((driver,i) => (
 
-          <SearchResultCard key={i} driver={driver} />
+          <DriverResultCard key={i} driver={driver} />
           
         ))}
 

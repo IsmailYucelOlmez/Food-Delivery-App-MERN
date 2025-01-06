@@ -1,7 +1,11 @@
 import Image from "../Image"
 import DriverAdvertBg from '../../assets/DriverAdvert.png'
+import { useNavigate } from "react-router-dom"
 
 const DriverAdvert = () => {
+
+  const navigate=useNavigate();
+  
   return (
     <div className="w-full relative rounded-lg">
        <Image src={DriverAdvertBg} className="w-full z-0 "/> 
@@ -19,7 +23,7 @@ const DriverAdvert = () => {
             <h5 className="text-[#fff] xs:text-lg md:text-3xl font-semibold">Ride with us</h5>
         </div>
         
-        <button className="bg-[#FC8A06] text-white xs:px-2 md:px-3 xs:py-1 md:py-2 xs:text-xs md:text-sm lg:text-base rounded-full">Get Started</button>
+        <button onClick={()=>navigate("/create-driver")} className="bg-[#FC8A06] text-white xs:px-2 md:px-3 xs:py-1 md:py-2 xs:text-xs md:text-sm lg:text-base rounded-full">Get Started</button>
       </div>
 
     </div>

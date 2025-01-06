@@ -35,6 +35,9 @@ const MobileNav = () => {
         <SheetDescription className="flex flex-col gap-4">
           {isAuthenticated ? (
             <>
+              <Link to="/search-driver" className="flex bg-white items-center font-bold hover:text-orange-500">
+                Driver Adverts
+              </Link>
               <Link to="/order-status" className="flex bg-white items-center font-bold hover:text-orange-500">
                 Order Status
               </Link>

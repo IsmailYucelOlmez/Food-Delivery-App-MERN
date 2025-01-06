@@ -22,7 +22,7 @@ const RestaurantInfoPage = () => {
 
   return (
     <Tabs defaultValue="orders">
-      <TabsList>
+      <TabsList className='flex justify-center items-center space-x-5'>
         <TabsTrigger value="orders">Orders</TabsTrigger>
         <TabsTrigger value="manage-restaurant">Manage Restaurant</TabsTrigger>
       </TabsList>

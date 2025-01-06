@@ -1,9 +1,11 @@
 import { DriverSearchState } from "@/pages/DriverSearchPage";
-import { DriverSearchResponse } from "@/types";
-import { useQuery } from "react-query";
+import { Driver, DriverSearchResponse } from "@/types";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useMutation, useQuery } from "react-query";
+import { toast } from "sonner";
 
 
-const API_BASE_URL=import.meta.env.BASE_URL;
+const API_BASE_URL=import.meta.env.VITE_API_BASE_URL;
 
 export const useSearchDrivers = ( searchState: DriverSearchState ) => {
   
@@ -11,7 +13,6 @@ export const useSearchDrivers = ( searchState: DriverSearchState ) => {
       const params = new URLSearchParams();
       params.set("searchQuery", searchState.searchQuery);
       params.set("page", searchState.page.toString());
-      //params.set("selectedCuisines", searchState.selectedCuisines.join(","));
   
       const response = await fetch( `${API_BASE_URL}/api/driver?${params.toString()}` );
   
@@ -28,13 +29,96 @@ export const useSearchDrivers = ( searchState: DriverSearchState ) => {
   };
 
 export const useCreateDriver=()=>{
+  const { getAccessTokenSilently } = useAuth0();
+  
+    const createMyDriverRequest = async ( driverFormData: FormData ): Promise<Driver> => {
+      const accessToken = await getAccessTokenSilently();
+  
+      const response = await fetch(`${API_BASE_URL}/api/driver`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: driverFormData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to create driver");
+      }
+  
+      return response.json();
+    };
+  
+    const { mutate: createDriver, isLoading, isSuccess, error } = useMutation(createMyDriverRequest);
+  
+    if (isSuccess) {
+      toast.success("Driver created!");
+    }
+  
+    if (error) {
+      toast.error("Unable to update driver");
+    }
+  
+    return { createDriver, isLoading };
 
 }
 
 export const useUpdateDriver=()=>{
 
+  const { getAccessTokenSilently } = useAuth0();
+    
+      const updateDriverRequest = async ( driverFormData: FormData ): Promise<Driver> => {
+       
+        const accessToken = await getAccessTokenSilently();
+    
+        const response = await fetch(`${API_BASE_URL}/api/driver`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: driverFormData,
+        });
+    
+        if (!response) {
+          throw new Error("Failed to update driver");
+        }
+    
+        return response.json();
+      };
+    
+      const { mutate: updateDriver, isLoading, error, isSuccess } = useMutation(updateDriverRequest);
+    
+      if (isSuccess) {
+        toast.success("Driver Updated");
+      }
+    
+      if (error) {
+        toast.error("Unable to update driver");
+      }
+    
+      return { updateDriver, isLoading }
 }
 
-export const getDriverById=()=>{
-
+export const useGetDriverById=()=>{
+   const { getAccessTokenSilently } = useAuth0();
+  
+    const getMyDriverRequest = async (): Promise<Driver> => {
+      const accessToken = await getAccessTokenSilently();
+  
+      const response = await fetch(`${API_BASE_URL}/api/driver`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to get driver");
+      }
+      return response.json();
+    };
+  
+    const { data: driver, isLoading } = useQuery( "fetchMyDriver", getMyDriverRequest );
+  
+    return { driver, isLoading };
 }
