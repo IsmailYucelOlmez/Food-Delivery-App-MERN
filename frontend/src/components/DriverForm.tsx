@@ -1,6 +1,6 @@
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Separator } from "./ui/separator";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ const formSchema = z
       required_error: "experience year is required",
       invalid_type_error: "must be a valid number",
     }),
-    licence_type: z.array(z.string()).nonempty({
+    licences: z.array(z.string()).nonempty({
       message: "please select at least one item",
     }),
     have_vehicle_types: z.array(z.string()).nonempty({
@@ -49,19 +49,16 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
     const form = useForm<DriverFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          licence_type: [],
+          licences: [],
           have_vehicle_types:[],
           languages:[],
+          additional_info:"",
+          location:"",
+          experience_years:-1
         },
-      });
+      });  
 
-
-      useEffect(() => {
-        if (!driver) {
-          return;
-        }
-    
-      }, [form, driver]);  
+      
 
     const onSubmit = (formDataJson: DriverFormData) => {
         const formData = new FormData();
@@ -74,7 +71,7 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
           (formDataJson.experience_years).toString()
         );
         
-        formDataJson.licence_type.forEach((licence, index) => {
+        formDataJson.licences.forEach((licence, index) => {
           formData.append(`licences[${index}]`, licence);
         });
 
@@ -91,7 +88,7 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
     };  
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-gray-50 p-10 rounded-lg xs:w-full lg:w-3/4 mx-auto">
 
           <DriverDetailsSection/>
@@ -104,11 +101,11 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
           
           <Button disabled={isLoading} type="submit" className="bg-orange-500">
             {isLoading ? 'Loading':"Submit"}
-          </Button>
+          </Button>       
 
         </form>
 
-    </Form>
+    </FormProvider>
   )
 }
 

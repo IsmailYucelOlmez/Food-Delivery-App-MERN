@@ -12,7 +12,7 @@ export type User={
 export type Driver={
 
   _id: string,
-  user: User,  
+  user: string,  
   location: string,
   licence_type: string[],
   experience_years: number, 

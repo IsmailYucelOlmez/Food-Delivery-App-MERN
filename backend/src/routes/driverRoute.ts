@@ -4,7 +4,8 @@ import driverController from '../controllers/driverController';
 
 const router=express.Router();
 
-router.get("/",jwtCheck,jwtParse,driverController.getDrivers)
+router.get("/",driverController.getDrivers)
+router.get("/byId",jwtCheck,jwtParse,driverController.getDriverById)
 router.post("/",jwtCheck,jwtParse,driverController.createDriver)
 router.put("/",jwtCheck,jwtParse,driverController.updateDriver)
 

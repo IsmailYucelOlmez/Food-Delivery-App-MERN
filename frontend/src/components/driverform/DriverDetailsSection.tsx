@@ -1,9 +1,15 @@
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
 
 const VehicleDetailsSection = () => {
   const { control } = useFormContext();
+
+  if (!control) {
+    console.error("Control is undefined. Did you forget to wrap the form in FormProvider?");
+    return null;
+  }
+
   return (
     <div className="space-y-2">
       <div>

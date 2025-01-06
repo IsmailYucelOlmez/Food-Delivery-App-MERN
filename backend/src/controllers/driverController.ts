@@ -8,37 +8,31 @@ const createRegexArray = (input: string): RegExp[] => {
 
 export const getDrivers = async (req: Request, res: Response) => {
     try {
-        
-        const location = (req.query.location as string) || "";
-        const licence_type = (req.query.licence_type as string) || "";
-        const experience_years = (req.query.experience_years as string) || "";
-        const have_vehicle_type = (req.query.have_vehicle_type as string) || "";      
+        console.log(req);
+        const location = (req.query.searchQuery as string) || "";
+        const licence_type = (req.query.licence as string) || "";     
         const page = parseInt(req.query.page as string) || 1;
 
         let query: any = {};
 
+        console.log(licence_type)
+
         if (licence_type) {
             
-            query["licence_type"] = { $all: createRegexArray(licence_type) };
-        }      
+            const licencesArray = licence_type.split(",").map((licence) => new RegExp(licence, "i"));
 
-        if (have_vehicle_type) {
-            
-            query["have_vehicle_type"] = { $all: createRegexArray(have_vehicle_type) };
-        }   
-
-        if (experience_years) {
-            
-            query["experience_years"] = parseInt(experience_years);
-        }   
+            query["licence_type"] = { $all: licencesArray }
+        }       
 
         if (location) {
                    
-            query["location"] = { $all: createRegexArray(location) };
+            query["location"] = { $in: createRegexArray(location) };
         }
 
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
+
+        console.log(query)
 
         const drivers = await Driver.find(query).skip(skip).limit(pageSize).lean();
         // lean() function return the documents from queries with the lean option enabled are plain JavaScript objects, not Mongoose Documents.
@@ -64,6 +58,7 @@ export const getDrivers = async (req: Request, res: Response) => {
 export const getDriverById=async(req:Request, res:Response)=>{
 
     try{     
+        
         const driver = await Driver.findOne({user:req.userId})
 
         if(!driver){
@@ -131,4 +126,4 @@ export const updateDriver=async(req:Request,res:Response)=>{
     }
 }
 
-export default { getDrivers,createDriver,updateDriver }
+export default { getDrivers,createDriver,updateDriver,getDriverById }

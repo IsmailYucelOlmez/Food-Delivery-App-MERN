@@ -20,7 +20,7 @@ const DriverSearchPage = () => {
 
   const { results, isLoading } = useSearchDrivers(searchState);
 
-  const setSelectedLicences = (selectedLicences: string[]) => { setSearchState((prevState) => ({ ...prevState, selectedLicences, page: 1, }));};
+  const setSelectedLicences = (selectedLicences: string[]) => { setSearchState((prevState) => ({ ...prevState, licence_type:selectedLicences, page: 1, }));};
 
   const setPage = (page: number) => { setSearchState((prevState) => ({ ...prevState, page, })); };
 

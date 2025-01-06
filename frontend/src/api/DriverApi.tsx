@@ -1,6 +1,6 @@
 import { DriverSearchState } from "@/pages/DriverSearchPage";
 import { Driver, DriverSearchResponse } from "@/types";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth0 } from "@auth0/auth0-react";;
 import { useMutation, useQuery } from "react-query";
 import { toast } from "sonner";
 
@@ -12,7 +12,9 @@ export const useSearchDrivers = ( searchState: DriverSearchState ) => {
     const createSearchRequest = async (): Promise<DriverSearchResponse> => {
       const params = new URLSearchParams();
       params.set("searchQuery", searchState.searchQuery);
+      params.set("licence",searchState.licence_type.join(","))
       params.set("page", searchState.page.toString());
+
   
       const response = await fetch( `${API_BASE_URL}/api/driver?${params.toString()}` );
   
@@ -105,7 +107,7 @@ export const useGetDriverById=()=>{
     const getMyDriverRequest = async (): Promise<Driver> => {
       const accessToken = await getAccessTokenSilently();
   
-      const response = await fetch(`${API_BASE_URL}/api/driver`, {
+      const response = await fetch(`${API_BASE_URL}/api/driver/byId`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
