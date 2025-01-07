@@ -4,6 +4,8 @@ const driverSchema = new mongoose.Schema({
         
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },  
 
+    user_name:{type: String, required:true},
+
     location: {type: String, required: true, },
  
     licence_type: { type: [String], required: true },

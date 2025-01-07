@@ -1,6 +1,7 @@
 import Driver from "../models/driver";
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
+import User from "../models/user";
 
 const createRegexArray = (input: string): RegExp[] => {
     return input.split(",").map((item) => new RegExp(item.trim(), "i"));
@@ -8,14 +9,13 @@ const createRegexArray = (input: string): RegExp[] => {
 
 export const getDrivers = async (req: Request, res: Response) => {
     try {
-        console.log(req);
+        
         const location = (req.query.searchQuery as string) || "";
         const licence_type = (req.query.licence as string) || "";     
         const page = parseInt(req.query.page as string) || 1;
 
         let query: any = {};
 
-        console.log(licence_type)
 
         if (licence_type) {
             
@@ -79,7 +79,9 @@ export const createDriver=async(req:Request,res:Response)=>{
 
     try {
 
+        
         const existingDriver=await Driver.findOne({user:req.userId});
+
 
         if(existingDriver){
 
@@ -90,6 +92,8 @@ export const createDriver=async(req:Request,res:Response)=>{
         driver.user=new mongoose.Types.ObjectId(req.userId);
         driver.created_at=new Date();
         driver.updated_at=new Date();
+
+        console.log(driver)
 
         await driver.save();
         res.status(201).send(driver);

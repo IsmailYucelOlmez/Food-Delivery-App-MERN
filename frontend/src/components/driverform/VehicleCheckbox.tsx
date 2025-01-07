@@ -4,7 +4,7 @@ import { ControllerRenderProps, FieldValues } from "react-hook-form";
 
 type Props = {
   vehicle: string;
-  field: ControllerRenderProps<FieldValues, "vehicles">;
+  field: ControllerRenderProps<FieldValues, "have_vehicle_type">;
 };
 
 const VehicleCheckbox = ({ vehicle, field }: Props) => {

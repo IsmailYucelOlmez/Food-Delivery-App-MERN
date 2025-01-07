@@ -1,5 +1,4 @@
 import { Driver } from "@/types";
-import { Link } from "react-router-dom";
 import { Clock, Dot, MapPin } from "lucide-react";
 
 type Props = {
@@ -12,7 +11,7 @@ const DriverResultCard = ({ driver }: Props) => {
       <div className="flex justify-between items-center w-3/4">
         <div id="card-content" className="flex flex-col">
           <h3 className="text-2xl font-bold tracking-tight mb-2 group-hover:underline ">
-            {driver.user.name}
+            {driver.user_name || driver.user.name}
           </h3>
         
           <div className="flex flex-row flex-wrap">

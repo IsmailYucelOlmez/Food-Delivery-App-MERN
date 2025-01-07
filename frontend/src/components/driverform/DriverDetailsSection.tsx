@@ -26,7 +26,7 @@ const VehicleDetailsSection = () => {
           </FormItem>
         )}
         />     
-        <FormField control={control} name="experienceYears" render={({ field }) => (
+        <FormField control={control} name="experience_years" render={({ field }) => (
             <FormItem className="flex-1">
                 <FormLabel>Experience Years</FormLabel>
                 <FormControl>
@@ -36,7 +36,7 @@ const VehicleDetailsSection = () => {
             </FormItem>
         )} />
       </div>
-        <FormField control={control} name="additionalInfo" render={({ field }) => (
+        <FormField control={control} name="additional_info" render={({ field }) => (
             <FormItem className="flex-1">
               <FormLabel>Additional Info</FormLabel>
               <FormControl>

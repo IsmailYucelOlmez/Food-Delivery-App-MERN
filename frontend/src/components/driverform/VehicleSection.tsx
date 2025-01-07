@@ -16,7 +16,7 @@ const VehicleSection = () => {
         </div>
         <FormField
           control={control}
-          name="vehicles"
+          name="have_vehicle_type"
           render={({ field }) => (
             <FormItem>
               <div className="grid md:grid-cols-5 gap-1">

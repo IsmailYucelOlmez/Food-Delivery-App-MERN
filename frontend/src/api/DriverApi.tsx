@@ -33,15 +33,16 @@ export const useSearchDrivers = ( searchState: DriverSearchState ) => {
 export const useCreateDriver=()=>{
   const { getAccessTokenSilently } = useAuth0();
   
-    const createMyDriverRequest = async ( driverFormData: FormData ): Promise<Driver> => {
+    const createMyDriverRequest = async ( driverFormData:any ): Promise<Driver> => {
       const accessToken = await getAccessTokenSilently();
   
       const response = await fetch(`${API_BASE_URL}/api/driver`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
-        body: driverFormData,
+        body: JSON.stringify(driverFormData),
       });
   
       if (!response.ok) {
@@ -69,7 +70,7 @@ export const useUpdateDriver=()=>{
 
   const { getAccessTokenSilently } = useAuth0();
     
-      const updateDriverRequest = async ( driverFormData: FormData ): Promise<Driver> => {
+      const updateDriverRequest = async ( driverFormData: any ): Promise<Driver> => {
        
         const accessToken = await getAccessTokenSilently();
     
@@ -77,8 +78,9 @@ export const useUpdateDriver=()=>{
           method: "PUT",
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            "Content-type":"application/json",
           },
-          body: driverFormData,
+          body: JSON.stringify(driverFormData),
         });
     
         if (!response) {

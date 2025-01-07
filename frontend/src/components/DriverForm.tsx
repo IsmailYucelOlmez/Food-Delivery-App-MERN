@@ -10,6 +10,7 @@ import DriverDetailsSection from "./driverform/DriverDetailsSection";
 import LicenceSection from "./driverform/LicenceTypeSection";
 import LanguageSection from "./driverform/LanguageSection";
 import VehicleSection from "./driverform/VehicleSection";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const formSchema = z
@@ -21,12 +22,10 @@ const formSchema = z
       required_error: "experience year is required",
       invalid_type_error: "must be a valid number",
     }),
-    licences: z.array(z.string()).nonempty({
+    licence_type: z.array(z.string()).nonempty({
       message: "please select at least one item",
     }),
-    have_vehicle_types: z.array(z.string()).nonempty({
-      message: "please select at least one item",
-    }),
+    have_vehicle_type: z.array(z.string()).optional(),
     languages: z.array(z.string()).nonempty({
       message: "please select at least one item",
     }),
@@ -39,57 +38,58 @@ type DriverFormData = z.infer<typeof formSchema>;
 
 type Props = {
   driver?: Driver;
-  onSave: (driverFormData: FormData) => void;
+  onSave: (driverFormData: any) => void;
   isLoading: boolean;
 };
 
 
 const DriverForm = ({onSave, isLoading, driver}:Props) => {
 
+    const { user } = useAuth0();
+
     const form = useForm<DriverFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          licences: [],
-          have_vehicle_types:[],
+          licence_type: [],
+          have_vehicle_type:[],
           languages:[],
-          additional_info:"",
-          location:"",
-          experience_years:-1
         },
       });  
 
+      useEffect(() => {
+        form.reset(driver);
+      }, [driver, form]);
       
 
-    const onSubmit = (formDataJson: DriverFormData) => {
-        const formData = new FormData();
-    
-        formData.append("location", formDataJson.location);
-        formData.append("additionalInfo", formDataJson.additional_info);
-    
-        formData.append(
-          "experienceYears",
-          (formDataJson.experience_years).toString()
-        );
-        
-        formDataJson.licences.forEach((licence, index) => {
-          formData.append(`licences[${index}]`, licence);
-        });
+    const onSubmit = (formDataJson:DriverFormData) => {
 
-        formDataJson.have_vehicle_types.forEach((vehicle, index) => {
-          formData.append(`vehicles[${index}]`, vehicle);
-        });
+      try{
 
-        formDataJson.languages.forEach((language, index) => {
-          formData.append(`languages[${index}]`, language);
-        });
-        
-    
-        onSave(formData);
+        console.log(formDataJson)
+
+        const payload = {
+          location: formDataJson.location,
+          additionalInfo: formDataJson.additional_info,
+          experience_years: formDataJson.experience_years,
+          licence_type: formDataJson.licence_type,
+          have_vehicle_type: formDataJson.have_vehicle_type, // JSON formatında gönderim için yeniden adlandırılabilir
+          languages: formDataJson.languages,
+          user_name:user?.name
+        };
+      
+        // onSave fonksiyonunu JSON verisiyle çağır
+        onSave(payload);
+
+      }catch(error){
+
+        console.log(error);
+      }    
     };  
 
   return (
-    <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-gray-50 p-10 rounded-lg xs:w-full lg:w-3/4 mx-auto">
+    <Form {...form}>
+        <form onSubmit={form.handleSubmit( (data) => { onSubmit(data);  }, (errors) => { console.error("Form validation errors:", errors); } )} 
+        className="space-y-8 bg-gray-50 p-10 rounded-lg xs:w-full lg:w-3/4 mx-auto">
 
           <DriverDetailsSection/>
           <Separator/>
@@ -105,7 +105,7 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
 
         </form>
 
-    </FormProvider>
+    </Form>
   )
 }
 

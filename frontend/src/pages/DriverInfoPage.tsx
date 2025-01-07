@@ -10,7 +10,6 @@ const DriverInfoPage = () => {
   const {updateDriver, isLoading:updateLoading}=useUpdateDriver();
 
   const isEditing=!!driver
-
   
   useEffect(()=>{
   

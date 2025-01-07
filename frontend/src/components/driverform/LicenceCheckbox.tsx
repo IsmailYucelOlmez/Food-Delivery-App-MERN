@@ -4,7 +4,7 @@ import { ControllerRenderProps, FieldValues } from "react-hook-form";
 
 type Props = {
   licence: string;
-  field: ControllerRenderProps<FieldValues, "licences">;
+  field: ControllerRenderProps<FieldValues, "licence_type">;
 };
 
 const LicenceCheckbox = ({ licence, field }: Props) => {

@@ -13,6 +13,7 @@ export type Driver={
 
   _id: string,
   user: string,  
+  user_name:string,
   location: string,
   licence_type: string[],
   experience_years: number, 
