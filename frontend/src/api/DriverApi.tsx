@@ -126,3 +126,27 @@ export const useGetDriverById=()=>{
   
     return { driver, isLoading };
 }
+
+export const useGetDriverDetails=(id?:string)=>{
+  const { getAccessTokenSilently } = useAuth0();
+ 
+   const getDriverDetailsRequest = async (): Promise<Driver> => {
+     const accessToken = await getAccessTokenSilently();
+ 
+     const response = await fetch(`${API_BASE_URL}/api/driver/details/${id}`, {
+       method: "GET",
+       headers: {
+         Authorization: `Bearer ${accessToken}`,
+       },
+     });
+ 
+     if (!response.ok) {
+       throw new Error("Failed to get driver");
+     }
+     return response.json();
+   };
+ 
+   const { data: driver, isLoading } = useQuery( "fetchDriverDetails", getDriverDetailsRequest, {enabled: !!id,} );
+ 
+   return { driver, isLoading };
+}

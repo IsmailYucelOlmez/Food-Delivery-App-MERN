@@ -69,7 +69,7 @@ const DriverForm = ({onSave, isLoading, driver}:Props) => {
 
         const payload = {
           location: formDataJson.location,
-          additionalInfo: formDataJson.additional_info,
+          additional_info: formDataJson.additional_info,
           experience_years: formDataJson.experience_years,
           licence_type: formDataJson.licence_type,
           have_vehicle_type: formDataJson.have_vehicle_type, // JSON formatında gönderim için yeniden adlandırılabilir

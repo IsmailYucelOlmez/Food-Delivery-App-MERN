@@ -12,6 +12,7 @@ import RestaurantDetailsPage from './pages/RestaurantDetailsPage'
 import OrderStatusPage from './pages/OrderStatusPage'
 import DriverSearchPage from './pages/DriverSearchPage'
 import DriverInfoPage from './pages/DriverInfoPage'
+import DriverDetailsPage from './pages/DriverDetailsPage'
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path='/create-driver' element={ <DriverInfoPage/>} ></Route>
         </Route>     
         <Route path='/search-driver' element={ <DriverSearchPage/>} ></Route>   
+        <Route path='/driver-details/:id' element={ <DriverDetailsPage/>} ></Route>
         <Route path='/details/:restaurantId' element={<RestaurantDetailsPage/>} ></Route>
         <Route path='*' element={<Navigate to={"/"}/>} ></Route>
       </Routes>

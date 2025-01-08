@@ -6,6 +6,7 @@ const router=express.Router();
 
 router.get("/",driverController.getDrivers)
 router.get("/byId",jwtCheck,jwtParse,driverController.getDriverById)
+router.get("/details/:id",jwtCheck,jwtParse,driverController.getDriverDetails)
 router.post("/",jwtCheck,jwtParse,driverController.createDriver)
 router.put("/",jwtCheck,jwtParse,driverController.updateDriver)
 

@@ -130,4 +130,22 @@ export const updateDriver=async(req:Request,res:Response)=>{
     }
 }
 
-export default { getDrivers,createDriver,updateDriver,getDriverById }
+const getDriverDetails = async (req: Request, res: Response) => {
+    try {
+      const driverId = req.params.id;
+  
+      const driver = await Driver.findOne({user:driverId})
+      if (!driver) {
+        return res.status(404).json({ message: "driver not found" });
+      }
+  
+      res.json(driver);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "something went wrong" });
+    }
+  };
+
+
+
+export default { getDrivers,createDriver,updateDriver,getDriverById, getDriverDetails }
