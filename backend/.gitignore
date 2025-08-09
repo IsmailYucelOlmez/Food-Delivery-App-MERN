@@ -1,2 +1,23 @@
+# Environment files
 .env
+.env.*
+!.env.example
+
+# Dependencies
 node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
