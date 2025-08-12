@@ -1,12 +1,11 @@
 import express from "express"
 import cors from "cors"
-import "dotenv/config";
-import mongoose from "mongoose";
 import driverRoute from "./routes/driverRoute";
+import Database from "./db";
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=>{
-    console.log("Driver Service connected to MongoDB")
-})
+const db = Database.getInstance();
+
+const PORT = process.env.PORT || 3004;
 
 const app=express();
 
@@ -15,7 +14,11 @@ app.use(express.json())
 
 app.use("/api/driver", driverRoute)
 
-const PORT = process.env.PORT || 3004;
+
+const mongoConnectionString = process.env.MONGODB_CONNECTION_STRING || 'mongodb://mongodb:27017/fooddelivery';
+
+
+db.connect(mongoConnectionString);
 
 app.listen(PORT,()=>{
     console.log(`Driver Service started on port ${PORT}`)

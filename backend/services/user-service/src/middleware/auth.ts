@@ -12,11 +12,18 @@ declare global {
   }
 }
 
-export const jwtCheck = auth({
-    audience: process.env.AUTH0_AUDIENCE,
-    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-    tokenSigningAlg: 'RS256'
-  });
+// Only create auth middleware if Auth0 configuration is available
+export const jwtCheck = process.env.AUTH0_AUDIENCE && process.env.AUTH0_ISSUER_BASE_URL 
+  ? auth({
+      audience: process.env.AUTH0_AUDIENCE,
+      issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+      tokenSigningAlg: 'RS256'
+    })
+  : (req: Request, res: Response, next: NextFunction) => {
+      // Skip Auth0 verification in development if not configured
+      console.warn('Auth0 configuration not found, skipping JWT verification');
+      next();
+    };
 
 export const jwtParse = async ( req: Request, res: Response, next: NextFunction ) => {
    
