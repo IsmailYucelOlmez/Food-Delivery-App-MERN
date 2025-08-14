@@ -1,5 +1,6 @@
 import { Response,Request, RequestHandler } from "express";
 import User from "../models/user";
+import { producer, TOPICS } from '../config/kafka';
 
 const createCurrentUser:RequestHandler=async(req,res)=>{
 
@@ -14,6 +15,27 @@ const createCurrentUser:RequestHandler=async(req,res)=>{
 
         const newUser=new User(req.body);
         await newUser.save();
+
+        // Send Kafka event for user creation
+        try {
+            await producer.send({
+                topic: TOPICS.USER_CREATED,
+                messages: [
+                    {
+                        key: newUser._id.toString(),
+                        value: JSON.stringify({
+                            userId: newUser._id,
+                            auth0Id: newUser.auth0Id,
+                            name: newUser.name,
+                            email: newUser.email,                         
+                        })
+                    }
+                ]
+            });
+            console.log('User created event sent to Kafka');
+        } catch (error) {
+            console.error('Failed to send user created event to Kafka:', error);
+        }
 
         res.status(201).json(newUser.toObject());
 
@@ -41,6 +63,28 @@ const updateCurrentUser = async (req: Request, res: Response) => {
       user.country = country;
   
       await user.save();
+
+      // Send Kafka event for user update
+      try {
+          await producer.send({
+              topic: TOPICS.USER_UPDATED,
+              messages: [
+                  {
+                      key: user._id.toString(),
+                      value: JSON.stringify({
+                          userId: user._id,
+                          name: user.name,
+                          addressLine1: user.addressLine1,
+                          city: user.city,
+                          country: user.country,                       
+                      })
+                  }
+              ]
+          });
+          console.log('User updated event sent to Kafka');
+      } catch (error) {
+          console.error('Failed to send user updated event to Kafka:', error);
+      }
   
       res.json(user);
     } catch (error) {

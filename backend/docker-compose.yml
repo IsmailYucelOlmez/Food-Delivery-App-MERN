@@ -1,4 +1,52 @@
 services:
+  # Kafka with KRaft
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://kafka:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Kafka Topic Management Service
+  kafka-service:
+    build:
+      context: ./services/kafka-service
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BROKERS=kafka:29092
+    restart: unless-stopped
+
   # API Gateway
   api-gateway:
     build:
@@ -12,11 +60,20 @@ services:
       - RESTAURANT_SERVICE_URL=http://restaurant-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
       - DRIVER_SERVICE_URL=http://driver-service:3004
+      - KAFKA_BROKERS=kafka:29092
     depends_on:
-      - user-service
-      - restaurant-service
-      - order-service
-      - driver-service
+      user-service:
+        condition: service_started
+      restaurant-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      driver-service:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
 
   # User Service
   user-service:
@@ -30,8 +87,14 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - KAFKA_BROKERS=kafka:29092
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
 
   # Restaurant Service
   restaurant-service:
@@ -48,8 +111,14 @@ services:
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - KAFKA_BROKERS=kafka:29092
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
 
   # Order Service
   order-service:
@@ -66,8 +135,14 @@ services:
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
+      - KAFKA_BROKERS=kafka:29092
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
 
   # Driver Service
   driver-service:
@@ -81,8 +156,14 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - KAFKA_BROKERS=kafka:29092
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
 
   # MongoDB
   mongodb:
@@ -98,3 +179,4 @@ services:
 
 volumes:
   mongodb_data:
+  kafka_data:

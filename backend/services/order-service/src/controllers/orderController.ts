@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
+import { producer, TOPICS } from '../config/kafka';
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
 const FRONTEND_URL = process.env.FRONTEND_URL as string;
@@ -64,6 +65,29 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
     order.status = "paid";
 
     await order.save();
+
+    // Send Kafka event for order payment
+    try {
+        await producer.send({
+            topic: TOPICS.ORDER_PAID,
+            messages: [
+                {
+                    key: order._id.toString(),
+                    value: JSON.stringify({
+                        orderId: order._id,
+                        userId: order.user,
+                        restaurantId: order.restaurant,
+                        totalAmount: order.totalAmount,
+                        status: order.status,
+                        paidAt: new Date()
+                    })
+                }
+            ]
+        });
+        console.log('Order paid event sent to Kafka');
+    } catch (error) {
+        console.error('Failed to send order paid event to Kafka:', error);
+    }
   }
 
   res.status(200).send();
@@ -107,6 +131,31 @@ const createCheckoutSession = async (req: Request, res: Response) => {
     }
 
     await newOrder.save();
+
+    // Send Kafka event for order creation
+    try {
+        await producer.send({
+            topic: TOPICS.ORDER_CREATED,
+            messages: [
+                {
+                    key: newOrder._id.toString(),
+                    value: JSON.stringify({
+                        orderId: newOrder._id,
+                        userId: newOrder.user,
+                        restaurantId: newOrder.restaurant,
+                        status: newOrder.status,
+                        deliveryDetails: newOrder.deliveryDetails,
+                        cartItems: newOrder.cartItems,
+                        createdAt: newOrder.createdAt
+                    })
+                }
+            ]
+        });
+        console.log('Order created event sent to Kafka');
+    } catch (error) {
+        console.error('Failed to send order created event to Kafka:', error);
+    }
+
     res.json({ url: session.url });
   } catch (error: any) {
     console.log(error);

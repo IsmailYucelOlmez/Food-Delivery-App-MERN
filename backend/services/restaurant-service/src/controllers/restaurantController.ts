@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
+import { producer, TOPICS } from '../config/kafka';
 
 const createRestaurant=async(req:Request, res:Response)=>{
 
@@ -20,6 +21,32 @@ const createRestaurant=async(req:Request, res:Response)=>{
         restaurant.user = new mongoose.Types.ObjectId(req.userId);
         restaurant.lastUpdated = new Date();
         await restaurant.save();
+
+        // Send Kafka event for restaurant creation
+        try {
+            await producer.send({
+                topic: TOPICS.RESTAURANT_CREATED,
+                messages: [
+                    {
+                        key: restaurant._id.toString(),
+                        value: JSON.stringify({
+                            restaurantId: restaurant._id,
+                            userId: restaurant.user,
+                            restaurantName: restaurant.restaurantName,
+                            city: restaurant.city,
+                            country: restaurant.country,
+                            cuisines: restaurant.cuisines,
+                            deliveryPrice: restaurant.deliveryPrice,
+                            estimatedDeliveryTime: restaurant.estimatedDeliveryTime,
+                            imageUrl: restaurant.imageUrl,
+                        })
+                    }
+                ]
+            });
+            console.log('Restaurant created event sent to Kafka');
+        } catch (error) {
+            console.error('Failed to send restaurant created event to Kafka:', error);
+        }
 
         res.status(201).send(restaurant);
 
@@ -74,6 +101,33 @@ const updateRestaurant=async(req:Request, res:Response)=>{
         }
       
         await restaurant.save();
+
+        // Send Kafka event for restaurant update
+        try {
+            await producer.send({
+                topic: TOPICS.RESTAURANT_UPDATED,
+                messages: [
+                    {
+                        key: restaurant._id.toString(),
+                        value: JSON.stringify({
+                            restaurantId: restaurant._id,
+                            userId: restaurant.user,
+                            restaurantName: restaurant.restaurantName,
+                            city: restaurant.city,
+                            country: restaurant.country,
+                            cuisines: restaurant.cuisines,
+                            deliveryPrice: restaurant.deliveryPrice,
+                            estimatedDeliveryTime: restaurant.estimatedDeliveryTime,
+                            imageUrl: restaurant.imageUrl,
+                        })
+                    }
+                ]
+            });
+            console.log('Restaurant updated event sent to Kafka');
+        } catch (error) {
+            console.error('Failed to send restaurant updated event to Kafka:', error);
+        }
+
         res.status(200).send(restaurant);
         
     } catch (error) {

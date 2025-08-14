@@ -5,6 +5,8 @@ import restaurantRoute from "./routes/restaurantRoute";
 import { v2 as cloudinary } from "cloudinary";
 import searchRestaurantRoute from './routes/searchRestaurantRoute'
 import Database from "./db";
+import { initializeKafka, disconnectKafka } from './config/kafka';
+import { startKafkaConsumers } from './services/kafkaConsumer';
 
 dotenv.config();
 
@@ -30,6 +32,23 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
 
+// Initialize Kafka
+initializeKafka();
+startKafkaConsumers();
+
 app.listen(PORT,()=>{
     console.log(`Restaurant Service started on port ${PORT}`)
 })
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down gracefully');
+    await disconnectKafka();
+    process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+    console.log('SIGINT received, shutting down gracefully');
+    await disconnectKafka();
+    process.exit(0);
+});
