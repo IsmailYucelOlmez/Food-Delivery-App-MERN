@@ -1,12 +1,15 @@
 
-dotenv.config();
 // Switch to the fooddelivery database
 db = db.getSiblingDB('fooddelivery');
 
+// Get environment variables from shell
+var username = process.env.MONGO_USERNAME || 'admin';
+var password = process.env.MONGO_PASSWORD || 'password';
+
 // Create a user for the fooddelivery database
 db.createUser({
-  user: process.env.MONGO_USERNAME,
-  pwd: process.env.MONGO_PASSWORD,
+  user: username,
+  pwd: password,
   roles: [
     {
       role: 'readWrite',
