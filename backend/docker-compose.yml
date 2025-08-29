@@ -128,12 +128,15 @@ services:
       - "7000:7000"
     environment:
       - PORT=7000
+      - AUTH_SERVICE_URL=http://auth-service:3006
       - USER_SERVICE_URL=http://user-service:3001
       - RESTAURANT_SERVICE_URL=http://restaurant-service:3002
       - ORDER_SERVICE_URL=http://order-service:3003
       - DRIVER_SERVICE_URL=http://driver-service:3004
       - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
     depends_on:
+      auth-service:
+        condition: service_started
       user-service:
         condition: service_started
       restaurant-service:
@@ -163,6 +166,7 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3006
       - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
     depends_on:
       mongodb:
@@ -188,6 +192,7 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3006
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
@@ -216,8 +221,36 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3006
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
+    depends_on:
+      mongodb:
+        condition: service_started
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
+      kafka-service:
+        condition: service_started
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "3006:3006"
+    environment:
+      - PORT=3006
+      - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
+      - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+      - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
       - FRONTEND_URL=${FRONTEND_URL}
       - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
     depends_on:
@@ -244,6 +277,7 @@ services:
       - MONGODB_CONNECTION_STRING=${MONGODB_CONNECTION_STRING}
       - AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       - AUTH0_ISSUER_BASE_URL=${AUTH0_ISSUER_BASE_URL}
+      - AUTH_SERVICE_URL=http://auth-service:3006
       - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
     depends_on:
       mongodb:

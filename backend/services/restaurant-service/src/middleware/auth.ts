@@ -7,11 +7,12 @@ declare global {
     interface Request {
       userId: string;
       auth0Id: string;
+      userRole: string;
     }
   }
 }
 
-// Only create auth middleware if Auth0 configuration is available
+// Auth0 JWT verification middleware
 export const jwtCheck = process.env.AUTH0_AUDIENCE && process.env.AUTH0_ISSUER_BASE_URL 
   ? auth({
       audience: process.env.AUTH0_AUDIENCE,
@@ -19,17 +20,16 @@ export const jwtCheck = process.env.AUTH0_AUDIENCE && process.env.AUTH0_ISSUER_B
       tokenSigningAlg: 'RS256'
     })
   : (req: Request, res: Response, next: NextFunction) => {
-      // Skip Auth0 verification in development if not configured
       console.warn('Auth0 configuration not found, skipping JWT verification');
       next();
     };
 
-export const jwtParse = async ( req: Request, res: Response, next: NextFunction ) => {
-   
+// Parse JWT token and validate with Auth Service
+export const jwtParse = async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
   
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: "Authorization header required" });
   }
   
   const token = authorization.split(" ")[1];
@@ -37,15 +37,61 @@ export const jwtParse = async ( req: Request, res: Response, next: NextFunction 
   try {
     const decoded = jwt.decode(token) as jwt.JwtPayload;
     const auth0Id = decoded.sub;
-  
-    // In microservices, we'll need to call User service to validate user
-    // For now, we'll just set the auth0Id and userId from the token
-    req.auth0Id = auth0Id as string;
-    req.userId = decoded.userId || decoded.sub; // Assuming userId is in token
+    const userId = decoded.userId;
+    const userRole = decoded.role;
+
+    // Validate token with Auth Service
+    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:3006';
     
-    next();
+    try {
+      const response = await fetch(`${authServiceUrl}/api/auth/validate-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      const userData = await response.json() as { userId: string; role: string };
+      
+      req.auth0Id = auth0Id as string;
+      req.userId = userData.userId;
+      req.userRole = userData.role;
+      
+      next();
+    } catch (error) {
+      console.error('Auth service validation error:', error);
+      // Fallback to local validation if auth service is unavailable
+      req.auth0Id = auth0Id as string;
+      req.userId = userId as string;
+      req.userRole = userRole as string;
+      next();
+    }
 
   } catch (error) {
-    return res.sendStatus(401);
+    console.error('JWT parse error:', error);
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
+
+// Role-based authorization middleware
+export const requireRole = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.userRole) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    
+    if (!roles.includes(req.userRole)) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+    
+    next();
+  };
+};
+
+// Restaurant owner only middleware
+export const requireRestaurantOwner = requireRole(['restaurant', 'admin']);

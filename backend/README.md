@@ -6,27 +6,34 @@ Bu proje, monolitik bir food delivery uygulamasının mikroservis mimarisine dö
 
 Uygulama şu mikroservislere bölünmüştür:
 
-### 1. **User Service** (Port: 3001)
-- Kullanıcı kimlik doğrulama ve yönetimi
-- Kullanıcı profili işlemleri
+### 1. **Auth Service** (Port: 3006)
+- Kimlik doğrulama ve yetkilendirme işlemleri
+- Kullanıcı kaydı ve giriş/çıkış
+- JWT token yönetimi
+- Rol tabanlı yetkilendirme (user, admin, driver, restaurant)
 - Auth0 entegrasyonu
 
-### 2. **Restaurant Service** (Port: 3002)
+### 2. **User Service** (Port: 3001)
+- Kullanıcı profili işlemleri
+- Kullanıcı bilgileri yönetimi
+- Adres bilgileri
+
+### 3. **Restaurant Service** (Port: 3002)
 - Restoran yönetimi ve menü işlemleri
 - Restoran arama ve filtreleme
 - Cloudinary entegrasyonu (resim yükleme)
 
-### 3. **Order Service** (Port: 3003)
+### 4. **Order Service** (Port: 3003)
 - Sipariş işleme ve ödeme yönetimi
 - Stripe entegrasyonu
 - Sipariş durumu takibi
 
-### 4. **Driver Service** (Port: 3004)
+### 5. **Driver Service** (Port: 3004)
 - Sürücü yönetimi ve teslimat işlemleri
 - Sürücü arama ve filtreleme
 - Sürücü profili yönetimi
 
-### 5. **API Gateway** (Port: 7000)
+### 6. **API Gateway** (Port: 7000)
 - İstekleri uygun mikroservislere yönlendirme
 - Load balancing
 - Error handling
@@ -106,6 +113,18 @@ npm run docker:down     # docker-compose down
 ```
 
 ## API Endpoints
+
+### Auth Service
+- `POST /api/auth/register` - Kullanıcı kaydı
+- `POST /api/auth/login` - Kullanıcı girişi
+- `POST /api/auth/logout` - Kullanıcı çıkışı
+- `POST /api/auth/refresh-token` - Token yenileme
+- `GET /api/auth/profile` - Kullanıcı profili
+- `PUT /api/auth/profile` - Profil güncelleme
+- `PUT /api/auth/change-password` - Şifre değiştirme
+- `GET /api/auth/users` - Tüm kullanıcıları listele (admin)
+- `PUT /api/auth/users/:userId/role` - Kullanıcı rolü güncelle (admin)
+- `PUT /api/auth/users/:userId/deactivate` - Kullanıcı deaktive et (admin)
 
 ### User Service
 - `POST /api/my/user` - Kullanıcı oluştur
