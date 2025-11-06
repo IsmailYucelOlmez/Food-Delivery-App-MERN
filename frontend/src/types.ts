@@ -9,6 +9,16 @@ export type User={
     country:string,
 }
 
+export type AuthProfile = {
+  _id: string;
+  email: string;
+  name: string;
+  role: 'user' | 'admin' | 'driver' | 'restaurant';
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Driver={
 
   _id: string,

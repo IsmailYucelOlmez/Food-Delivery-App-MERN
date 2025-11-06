@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "sonner";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:7000";
 
 export const useGetMyRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
@@ -98,14 +98,14 @@ export const useCreateMyRestaurant = () => {
     return { updateRestaurant, isLoading };
   };
 
-  export const useGetRestaurantOrders=()=>{
+  export const useGetRestaurantOrders=(restaurantId?: string)=>{
     
     const { getAccessTokenSilently } = useAuth0();
 
     const getMyRestaurantOrdersRequest = async (): Promise<Order[]> => {
       const accessToken = await getAccessTokenSilently();
 
-      const response = await fetch(`${API_BASE_URL}/api/my/restaurant/order`, {
+      const response = await fetch(`${API_BASE_URL}/api/order/restaurant/${restaurantId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -118,7 +118,11 @@ export const useCreateMyRestaurant = () => {
       return response.json();
     };
 
-    const { data: orders, isLoading } = useQuery( "fetchMyRestaurantOrders", getMyRestaurantOrdersRequest );
+    const { data: orders, isLoading } = useQuery( 
+      ["fetchMyRestaurantOrders", restaurantId], 
+      getMyRestaurantOrdersRequest,
+      { enabled: !!restaurantId }
+    );
 
     return { orders, isLoading };
   }
@@ -134,7 +138,7 @@ export const useCreateMyRestaurant = () => {
     const updateRestaurantOrderRequest = async ( { orderId, status }: UpdateOrderStatusRequest ) => {
       const accessToken = await getAccessTokenSilently();
   
-      const response = await fetch(`${API_BASE_URL}/api/my/restaurant/order/${orderId}/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/order/${orderId}/status`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

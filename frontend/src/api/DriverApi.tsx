@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "react-query";
 import { toast } from "sonner";
 
 
-const API_BASE_URL=import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:7000";
 
 export const useSearchDrivers = ( searchState: DriverSearchState ) => {
   
@@ -16,7 +16,7 @@ export const useSearchDrivers = ( searchState: DriverSearchState ) => {
       params.set("page", searchState.page.toString());
 
   
-      const response = await fetch( `${API_BASE_URL}/api/driver?${params.toString()}` );
+      const response = await fetch( `${API_BASE_URL}/api/driver/search?${params.toString()}` );
   
       if (!response.ok) {
         throw new Error("Failed to get drivers");
@@ -109,7 +109,7 @@ export const useGetDriverById=()=>{
     const getMyDriverRequest = async (): Promise<Driver> => {
       const accessToken = await getAccessTokenSilently();
   
-      const response = await fetch(`${API_BASE_URL}/api/driver/byId`, {
+      const response = await fetch(`${API_BASE_URL}/api/driver/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -133,7 +133,7 @@ export const useGetDriverDetails=(id?:string)=>{
    const getDriverDetailsRequest = async (): Promise<Driver> => {
      const accessToken = await getAccessTokenSilently();
  
-     const response = await fetch(`${API_BASE_URL}/api/driver/details/${id}`, {
+     const response = await fetch(`${API_BASE_URL}/api/driver/${id}`, {
        method: "GET",
        headers: {
          Authorization: `Bearer ${accessToken}`,

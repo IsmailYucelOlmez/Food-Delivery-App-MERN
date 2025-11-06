@@ -1,0 +1,96 @@
+{{- $ns := .Values.namespace -}}
+{{- $ports := .Values.common.ports -}}
+{{- $brokers := .Values.common.kafkaBrokers -}}
+{{- $frontend := .Values.common.frontendUrl -}}
+
+{{- define "svcTpl" -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  namespace: {{ .ns }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .port }}
+          envFrom:
+            - configMapRef:
+                name: common-config
+            - secretRef:
+                name: common-secrets
+          env:
+            - name: PORT
+              value: "{{ .port }}"
+          resources:
+            requests:
+              cpu: {{ .resources.requests.cpu | quote }}
+              memory: {{ .resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .resources.limits.cpu | quote }}
+              memory: {{ .resources.limits.memory | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .ns }}
+spec:
+  selector:
+    app: {{ .name }}
+  ports:
+    - port: {{ .port }}
+      targetPort: {{ .port }}
+  type: ClusterIP
+{{- end -}}
+
+{{- $svc := dict "ns" $ns -}}
+
+{{- $_ := set $svc "name" "api-gateway" -}}
+{{- $_ := set $svc "image" .Values.services.apiGateway.image -}}
+{{- $_ := set $svc "port" $ports.apiGateway -}}
+{{- $_ := set $svc "resources" .Values.services.apiGateway.resources -}}
+{{ include "svcTpl" $svc }}
+
+{{- $_ = set $svc "name" "auth-service" -}}
+{{- $_ = set $svc "image" .Values.services.auth.image -}}
+{{- $_ = set $svc "port" $ports.auth -}}
+{{- $_ = set $svc "resources" .Values.services.auth.resources -}}
+{{ include "svcTpl" $svc }}
+
+{{- $_ = set $svc "name" "user-service" -}}
+{{- $_ = set $svc "image" .Values.services.user.image -}}
+{{- $_ = set $svc "port" $ports.user -}}
+{{- $_ = set $svc "resources" .Values.services.user.resources -}}
+{{ include "svcTpl" $svc }}
+
+{{- $_ = set $svc "name" "restaurant-service" -}}
+{{- $_ = set $svc "image" .Values.services.restaurant.image -}}
+{{- $_ = set $svc "port" $ports.restaurant -}}
+{{- $_ = set $svc "resources" .Values.services.restaurant.resources -}}
+{{ include "svcTpl" $svc }}
+
+{{- $_ = set $svc "name" "order-service" -}}
+{{- $_ = set $svc "image" .Values.services.order.image -}}
+{{- $_ = set $svc "port" $ports.order -}}
+{{- $_ = set $svc "resources" .Values.services.order.resources -}}
+{{ include "svcTpl" $svc }}
+
+{{- $_ = set $svc "name" "driver-service" -}}
+{{- $_ = set $svc "image" .Values.services.driver.image -}}
+{{- $_ = set $svc "port" $ports.driver -}}
+{{- $_ = set $svc "resources" .Values.services.driver.resources -}}
+{{ include "svcTpl" $svc }}
+

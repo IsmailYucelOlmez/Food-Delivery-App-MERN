@@ -2,13 +2,13 @@ import { SearchState } from "@/pages/SearchPage";
 import { Restaurant, RestaurantSearchResponse } from "@/types";
 import { useQuery } from "react-query";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:7000";
 
 export const useGetRestaurantById=(id?:string)=>{
 
   const getRestaurantByIdRequest=async(): Promise<Restaurant>=>{
 
-    const response=await fetch(`${API_BASE_URL}/api/restaurant/details/${id}`)
+    const response=await fetch(`${API_BASE_URL}/api/restaurant/${id}`)
 
     if(!response.ok){
       throw new Error("Failed to Fetch")

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: food-delivery
+description: Helm chart for Food Delivery backend (microservices, MongoDB, Kafka, Ingress)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+- name: ingress-nginx
+  version: "4.8.3"
+  repository: "https://kubernetes.github.io/ingress-nginx"
+  condition: nginxIngress.enabled
+

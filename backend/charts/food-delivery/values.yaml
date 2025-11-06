@@ -1,0 +1,108 @@
+namespace: food-delivery
+
+ingress:
+  enabled: true
+  className: nginx
+  host: food.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+
+nginxIngress:
+  enabled: true
+  replicas: 1
+  image: k8s.gcr.io/ingress-nginx/controller:v1.8.1
+  imagePullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  config:
+    enable-ssl-passthrough: "false"
+    ssl-protocols: "TLSv1.2 TLSv1.3"
+    ssl-ciphers: "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+    proxy-body-size: "10m"
+    proxy-read-timeout: "600"
+    proxy-send-timeout: "600"
+    client-max-body-size: "10m"
+
+common:
+  frontendUrl: http://localhost:3000
+  kafkaBrokers: "kafka-0.kafka:9092"
+  ports:
+    apiGateway: 7000
+    auth: 3006
+    user: 3001
+    restaurant: 3002
+    order: 3003
+    driver: 3004
+
+secrets:
+  mongodb: mongodb://mongodb:27017/fooddelivery
+  jwt: change-me
+  cloudinary:
+    cloudName: ""
+    apiKey: ""
+    apiSecret: ""
+
+mongodb:
+  storage: 2Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+kafka:
+  enabled: true
+  replicas: 1
+  storage: 5Gi
+  image: confluentinc/cp-kafka:7.6.1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+services:
+  apiGateway:
+    image: api-gateway:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+  auth:
+    image: auth-service:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+  user:
+    image: user-service:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+  restaurant:
+    image: restaurant-service:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+  order:
+    image: order-service:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+  driver:
+    image: driver-service:latest
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits: { cpu: 500m, memory: 256Mi }
+

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+  namespace: {{ .Values.namespace }}
+data:
+  API_GATEWAY_PORT: "{{ .Values.common.ports.apiGateway }}"
+  AUTH_SERVICE_PORT: "{{ .Values.common.ports.auth }}"
+  USER_SERVICE_PORT: "{{ .Values.common.ports.user }}"
+  RESTAURANT_SERVICE_PORT: "{{ .Values.common.ports.restaurant }}"
+  ORDER_SERVICE_PORT: "{{ .Values.common.ports.order }}"
+  DRIVER_SERVICE_PORT: "{{ .Values.common.ports.driver }}"
+  AUTH_SERVICE_URL: "http://auth-service:{{ .Values.common.ports.auth }}"
+  USER_SERVICE_URL: "http://user-service:{{ .Values.common.ports.user }}"
+  RESTAURANT_SERVICE_URL: "http://restaurant-service:{{ .Values.common.ports.restaurant }}"
+  ORDER_SERVICE_URL: "http://order-service:{{ .Values.common.ports.order }}"
+  DRIVER_SERVICE_URL: "http://driver-service:{{ .Values.common.ports.driver }}"
+  KAFKA_BROKERS: "{{ .Values.common.kafkaBrokers }}"
+  FRONTEND_URL: "{{ .Values.common.frontendUrl }}"
+
