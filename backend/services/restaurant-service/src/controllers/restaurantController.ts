@@ -3,6 +3,7 @@ import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
 import { producer, TOPICS } from '../config/kafka';
+import { indexRestaurant, updateRestaurantIndex } from '../services/elasticsearchService';
 
 const createRestaurant=async(req:Request, res:Response)=>{
 
@@ -21,6 +22,9 @@ const createRestaurant=async(req:Request, res:Response)=>{
         restaurant.user = new mongoose.Types.ObjectId(req.userId);
         restaurant.lastUpdated = new Date();
         await restaurant.save();
+
+        // Index restaurant in Elasticsearch
+        await indexRestaurant(restaurant);
 
         // Send Kafka event for restaurant creation
         try {
@@ -101,6 +105,9 @@ const updateRestaurant=async(req:Request, res:Response)=>{
         }
       
         await restaurant.save();
+
+        // Update restaurant in Elasticsearch
+        await updateRestaurantIndex(restaurant);
 
         // Send Kafka event for restaurant update
         try {

@@ -197,9 +197,12 @@ services:
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - KAFKA_BROKERS=kafka1:29092,kafka2:29092,kafka3:29092
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
     depends_on:
       mongodb:
         condition: service_started
+      elasticsearch:
+        condition: service_healthy
       kafka1:
         condition: service_healthy
       kafka2:
@@ -321,8 +324,29 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
 
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
   kafka1_data:
   kafka2_data:
   kafka3_data:
+  elasticsearch_data:

@@ -7,6 +7,7 @@ import searchRestaurantRoute from './routes/searchRestaurantRoute'
 import Database from "./db";
 import { initializeKafka, disconnectKafka } from './config/kafka';
 import { startKafkaConsumers } from './services/kafkaConsumer';
+import { initializeElasticsearchIndex, testElasticsearchConnection } from './config/elasticsearch';
 
 dotenv.config();
 
@@ -35,6 +36,25 @@ cloudinary.config({
 // Initialize Kafka
 initializeKafka();
 startKafkaConsumers();
+
+// Initialize Elasticsearch
+const initializeServices = async () => {
+    try {
+        // Test Elasticsearch connection
+        const esConnected = await testElasticsearchConnection();
+        if (esConnected) {
+            // Initialize Elasticsearch index
+            await initializeElasticsearchIndex();
+        } else {
+            console.warn('Elasticsearch connection failed. Search functionality will fallback to MongoDB.');
+        }
+    } catch (error) {
+        console.error('Failed to initialize Elasticsearch:', error);
+        console.warn('Search functionality will fallback to MongoDB.');
+    }
+};
+
+initializeServices();
 
 app.listen(PORT,()=>{
     console.log(`Restaurant Service started on port ${PORT}`)
